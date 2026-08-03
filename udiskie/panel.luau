@@ -282,10 +282,10 @@ local function render()
             table.insert(cardItems, renderPartitionRow(p))
         end
 
-        table.insert(children, ui.scroll({ gap = 10, maxLines = 12 }, cardItems))
+        table.insert(children, ui.scroll({ flexGrow = 1, gap = 10 }, cardItems))
     end
 
-    panel.render(ui.column({ gap = 12, padding = 16 }, children))
+    panel.render(ui.column({ flexGrow = 1, gap = 12, padding = 16, align = "stretch" }, children))
 end
 
 function onOpen()
