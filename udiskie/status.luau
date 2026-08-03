@@ -17,11 +17,22 @@ local function mountedDevices()
 end
 
 local function render()
+    local data = noctalia.state.get("udiskie_devices")
     local mounted = mountedDevices()
     local glyph = noctalia.getConfig("glyph") or "device-usb"
     local showCount = noctalia.getConfig("show_count")
 
     barWidget.setGlyph(glyph)
+
+    if type(data) == "table" and data.error then
+        barWidget.setGlyphColor("#f59e0b")
+        barWidget.setText("")
+        barWidget.setTooltip(noctalia.tr("error_missing_dep"))
+        return
+    else
+        barWidget.setGlyphColor("")
+        barWidget.setColor("")
+    end
 
     if #mounted == 0 then
         barWidget.setText("")

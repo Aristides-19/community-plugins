@@ -2,7 +2,7 @@
 -- Udiskie service: monitors `udisksctl monitor` in real time, publishes device.
 -- state to shared state (`udiskie_devices`), handles notifications, and processes IPC.
 --
--- External commands: udiskie-info, udiskie-mount, udiskie-umount, udisksctl.
+-- External commands: udiskie-info, udiskie-mount, udiskie-umount, udisksctl, xdg-open.
 
 local prevMountedDevices = {}
 local prevAllDevices = {}
@@ -142,11 +142,13 @@ end
 local function fetchDevices()
     noctalia.runAsync("udiskie-info -a -o \"{device_file}|{ui_label}|{is_mounted}|{mount_path}|{is_luks}|{is_drive}|{is_partition}|{is_filesystem}|{is_detachable}|{is_ejectable}|{in_use}\"", function(res)
         if not res or res.exitCode ~= 0 then
+            noctalia.state.set("udiskie_devices", { drives = {}, standalone = {}, raw = {}, error = "missing_dep" })
             return
         end
 
         local rawDevices, currentMounted = parseUdiskieOutput(res.stdout)
         local structured = buildHierarchy(rawDevices)
+        structured.error = nil
 
         processNotifications(rawDevices, currentMounted)
 

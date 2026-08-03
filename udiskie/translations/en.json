@@ -34,6 +34,8 @@
   "btn_open": "Open",
   "status_mounted": "Mounted",
   "status_unmounted": "Unmounted",
-  "status_locked": "Locked (LUKS)"
+  "status_locked": "Locked (LUKS)",
+  "error_missing_dep": "udiskie binary is missing from PATH",
+  "btn_retry": "Retry Connection",
+  "btn_docs": "Check Documentation"
 }
-

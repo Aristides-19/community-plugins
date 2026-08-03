@@ -176,7 +176,32 @@ local function render()
     local drives = data.drives or {}
     local standalone = data.standalone or {}
 
-    if #drives == 0 and #standalone == 0 then
+    if data.error then
+        table.insert(children, ui.column({ align = "center", justify = "center", paddingV = 24, gap = 12 }, {
+            ui.glyph({ name = "alert-triangle", size = 36, color = "warning" }),
+            ui.label({ text = noctalia.tr("error_missing_dep"), color = "on_surface" }),
+            ui.row({ gap = 8, align = "center" }, {
+                ui.button({
+                    text = noctalia.tr("btn_retry"),
+                    glyph = "refresh",
+                    variant = "outline",
+                    controlSize = "sm",
+                    onClick = function()
+                        noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all refresh")
+                    end,
+                }),
+                ui.button({
+                    text = noctalia.tr("btn_docs"),
+                    glyph = "external-link",
+                    variant = "ghost",
+                    controlSize = "sm",
+                    onClick = function()
+                        noctalia.runAsync("xdg-open 'https://github.com/coldfix/udiskie/wiki/Installation'")
+                    end,
+                }),
+            }),
+        }))
+    elseif #drives == 0 and #standalone == 0 then
         table.insert(children, ui.column({ align = "center", justify = "center", paddingV = 24, gap = 8 }, {
             ui.glyph({ name = "device-floppy", size = 32, color = "on_surface_variant/0.5" }),
             ui.label({ text = noctalia.tr("panel_empty"), color = "on_surface_variant" }),
