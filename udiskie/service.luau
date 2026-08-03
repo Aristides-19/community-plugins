@@ -101,13 +101,13 @@ local function processNotifications(rawDevices, currentMounted)
     if not isInitialFetch then
         for dev, label in pairs(currentAllDevs) do
             if not prevAllDevices[dev] then
-                noctalia.notify("Drive Connected", label .. " connected")
+                noctalia.notify(noctalia.tr("notif_drive_connected_title"), noctalia.tr("notif_drive_connected_body", { label = label }))
             end
         end
         -- 2. Device Removal (Physical USB unplugged / powered off)
         for dev, label in pairs(prevAllDevices) do
             if not currentAllDevs[dev] then
-                noctalia.notify("Drive Removed", label .. " disconnected")
+                noctalia.notify(noctalia.tr("notif_drive_removed_title"), noctalia.tr("notif_drive_removed_body", { label = label }))
             end
         end
     end
@@ -115,7 +115,7 @@ local function processNotifications(rawDevices, currentMounted)
     -- 3. Device Mounted
     for dev, label in pairs(currentMounted) do
         if not prevMountedDevices[dev] then
-            noctalia.notify("Drive Mounted", label .. " is ready to use")
+            noctalia.notify(noctalia.tr("notif_drive_mounted_title"), noctalia.tr("notif_drive_mounted_body", { label = label }))
             if noctalia.getConfig("auto_open_filemanager") == true then
                 local cmd = noctalia.getConfig("file_manager_cmd") or "xdg-open"
                 for _, d in ipairs(rawDevices) do
@@ -131,7 +131,7 @@ local function processNotifications(rawDevices, currentMounted)
     -- 4. Device Unmounted
     for dev, label in pairs(prevMountedDevices) do
         if not currentMounted[dev] and currentAllDevs[dev] then
-            noctalia.notify("Drive Unmounted", label .. " was safely unmounted")
+            noctalia.notify(noctalia.tr("notif_drive_unmounted_title"), noctalia.tr("notif_drive_unmounted_body", { label = label }))
         end
     end
 
@@ -205,42 +205,42 @@ function onIpc(event, payload)
     if event == "mount" and payload then
         noctalia.runAsync("udiskie-mount -r " .. payload, function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
-                noctalia.notifyError("Mount Failed", cleanError(res.stderr, "Could not mount " .. payload))
+                noctalia.notifyError(noctalia.tr("notif_mount_failed_title"), cleanError(res.stderr, noctalia.tr("notif_mount_failed_fallback", { device = payload })))
             end
             fetchDevices()
         end, 30000)
     elseif event == "mount_all" then
         noctalia.runAsync("udiskie-mount -a", function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
-                noctalia.notifyError("Mount All Failed", cleanError(res and res.stderr, "Could not mount all devices"))
+                noctalia.notifyError(noctalia.tr("notif_mount_all_failed_title"), cleanError(res and res.stderr, noctalia.tr("notif_mount_all_failed_fallback")))
             end
             fetchDevices()
         end, 10000)
     elseif event == "unmount" and payload then
         noctalia.runAsync("udiskie-umount " .. payload, function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
-                noctalia.notifyError("Unmount Failed", cleanError(res.stderr, "Device " .. payload .. " is busy or in use"))
+                noctalia.notifyError(noctalia.tr("notif_unmount_failed_title"), cleanError(res.stderr, noctalia.tr("notif_unmount_failed_fallback", { device = payload })))
             end
             fetchDevices()
         end, 10000)
     elseif event == "unmount_all" then
         noctalia.runAsync("udiskie-umount -a", function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
-                noctalia.notifyError("Unmount All Failed", cleanError(res and res.stderr, "One or more devices are busy"))
+                noctalia.notifyError(noctalia.tr("notif_unmount_all_failed_title"), cleanError(res and res.stderr, noctalia.tr("notif_unmount_all_failed_fallback")))
             end
             fetchDevices()
         end, 10000)
     elseif event == "eject" and payload then
         noctalia.runAsync("udiskie-umount -e " .. payload, function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
-                noctalia.notifyError("Eject Failed", cleanError(res.stderr, "Could not eject " .. payload))
+                noctalia.notifyError(noctalia.tr("notif_eject_failed_title"), cleanError(res.stderr, noctalia.tr("notif_eject_failed_fallback", { device = payload })))
             end
             fetchDevices()
         end, 10000)
     elseif event == "detach" and payload then
         noctalia.runAsync("udiskie-umount -d " .. payload, function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
-                noctalia.notifyError("Power Off Failed", cleanError(res.stderr, "Could not power off " .. payload))
+                noctalia.notifyError(noctalia.tr("notif_poweroff_failed_title"), cleanError(res.stderr, noctalia.tr("notif_poweroff_failed_fallback", { device = payload })))
             end
             fetchDevices()
         end)

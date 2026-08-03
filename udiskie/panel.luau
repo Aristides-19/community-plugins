@@ -163,7 +163,7 @@ local function renderDriveCard(drvItem)
 
     local partRows = {}
     if #parts == 0 then
-        table.insert(partRows, ui.label({ text = "No partitions found", color = "on_surface_variant", fontSize = 12 }))
+        table.insert(partRows, ui.label({ text = noctalia.tr("no_partitions_found"), color = "on_surface_variant", fontSize = 12 }))
     else
         for _, p in ipairs(parts) do
             table.insert(partRows, renderPartitionRow(p))
