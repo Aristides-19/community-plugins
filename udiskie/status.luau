@@ -61,5 +61,9 @@ function onClick()
     noctalia.togglePanel("aristides/udiskie:manager")
 end
 
+function onRightClick()
+    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all refresh")
+end
+
 render()
 
