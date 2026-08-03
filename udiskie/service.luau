@@ -153,7 +153,26 @@ local function fetchDevices()
 
         processNotifications(rawDevices, currentMounted)
 
-        noctalia.state.set("udiskie_devices", structured)
+        -- Fetch df disk usage for mounted partitions
+        noctalia.runAsync("df -B1 --output=target,used 2>/dev/null", function(dfRes)
+            if dfRes and dfRes.exitCode == 0 and dfRes.stdout then
+                local usageMap = {}
+                for line in dfRes.stdout:gmatch("[^\r\n]+") do
+                    local target, used = line:match("^(%S+)%s+(%d+)$")
+                    if target and used then
+                        usageMap[target] = tonumber(used)
+                    end
+                end
+
+                for _, d in ipairs(rawDevices) do
+                    if d.mounted and d.mountPath ~= "" and usageMap[d.mountPath] then
+                        d.usedSize = usageMap[d.mountPath]
+                    end
+                end
+            end
+
+            noctalia.state.set("udiskie_devices", structured)
+        end)
     end, 5000)
 end
 

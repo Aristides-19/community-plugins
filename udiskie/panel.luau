@@ -30,10 +30,31 @@ local function getData()
     return data
 end
 
+local function formatSize(bytes)
+    local b = tonumber(bytes)
+    if not b or b <= 0 then return "" end
+    local units = { "B", "KB", "MB", "GB", "TB" }
+    local i = 1
+    while b >= 1000 and i < #units do
+        b = b / 1000
+        i = i + 1
+    end
+    return string.format("%.1f %s", b, units[i])
+end
+
 local function renderPartitionRow(part)
     local statusText = part.mounted and noctalia.tr("status_mounted") or (part.isLuks and noctalia.tr("status_locked") or noctalia.tr("status_unmounted"))
     local statusColor = part.mounted and "success" or (part.isLuks and "error" or "on_surface_variant")
     local statusGlyph = part.mounted and "circle-check" or (part.isLuks and "lock" or "circle")
+
+    local usageText = part.device
+    if part.mounted and part.usedSize and part.usedSize > 0 then
+        local usedStr = formatSize(part.usedSize)
+        if usedStr ~= "" then
+            local pct = math.floor((part.usedSize / (part.size > 0 and part.size or 1)) * 100)
+            usageText = usageText .. " · " .. usedStr .. " used (" .. tostring(pct) .. "%)"
+        end
+    end
 
     local actions = {}
     if part.mounted then
@@ -51,14 +72,14 @@ local function renderPartitionRow(part)
             table.insert(actions, ui.button({
                 text = noctalia.tr("btn_open"),
                 glyph = "folder",
-                variant = "outline",
+                variant = "ghost",
                 controlSize = "sm",
                 onClick = function() openPath(part.mountPath) end,
             }))
         end
         table.insert(actions, ui.button({
-            text = noctalia.tr("btn_unmount"),
             glyph = "player-stop",
+            tooltip = noctalia.tr("btn_unmount"),
             variant = "ghost",
             controlSize = "sm",
             onClick = function() unmountDevice(part.device) end,
@@ -67,7 +88,7 @@ local function renderPartitionRow(part)
         table.insert(actions, ui.button({
             text = noctalia.tr("btn_mount"),
             glyph = "player-play",
-            variant = "primary",
+            variant = "ghost",
             controlSize = "sm",
             onClick = function() mountDevice(part.device) end,
         }))
@@ -78,18 +99,22 @@ local function renderPartitionRow(part)
         justify = "space_between",
         fill = "surface_variant/0.2",
         radius = 6,
-        padding = 8,
+        paddingV = 6,
+        paddingH = 8,
+        gap = 12,
+        height = 52,
     }, {
-        ui.column({ gap = 2 }, {
+        ui.column({ gap = 2, flexGrow = 1, justify = "center" }, {
             ui.row({ gap = 6, align = "center" }, {
                 ui.glyph({ name = statusGlyph, size = 14, color = statusColor }),
-                ui.label({ text = part.label, fontWeight = "bold", fontSize = 13 }),
-                ui.label({ text = statusText, color = statusColor, fontSize = 11 }),
+                ui.label({ text = part.label, fontWeight = "bold", fontSize = 13, maxLines = 1 }),
+                ui.label({ text = "• " .. statusText, color = statusColor, fontSize = 11 }),
             }),
             ui.label({
-                text = part.device .. (part.mountPath ~= "" and (" • " .. part.mountPath) or ""),
+                text = usageText,
                 color = "on_surface_variant",
                 fontSize = 11,
+                maxLines = 1,
             }),
         }),
         ui.row({ gap = 4, align = "center" }, actions),
@@ -99,24 +124,24 @@ end
 local function renderDriveCard(drvItem)
     local drv = drvItem.drive
     local parts = drvItem.partitions or {}
+    local sizeStr = formatSize(drv.size)
 
-    local driveHeaderActions = {}
-    if drv.isDetachable or drv.inUse or #parts > 0 then
-        table.insert(driveHeaderActions, ui.button({
+    local driveHeaderActions = {
+        ui.button({
             text = noctalia.tr("btn_eject"),
             glyph = "player-eject",
             variant = "outline",
             controlSize = "sm",
             onClick = function() ejectDevice(drv.device) end,
-        }))
-        table.insert(driveHeaderActions, ui.button({
+        }),
+        ui.button({
             glyph = "plug-off",
             tooltip = noctalia.tr("btn_poweroff"),
             variant = "destructive",
             controlSize = "sm",
             onClick = function() detachDevice(drv.device) end,
-        }))
-    end
+        }),
+    }
 
     local partRows = {}
     if #parts == 0 then
@@ -139,7 +164,11 @@ local function renderDriveCard(drvItem)
                 ui.glyph({ name = "device-usb", size = 18, color = "primary" }),
                 ui.column({ gap = 2 }, {
                     ui.label({ text = drv.label, fontWeight = "bold", fontSize = 14, maxLines = 1 }),
-                    ui.label({ text = drv.device, color = "on_surface_variant", fontSize = 11 }),
+                    ui.label({
+                        text = drv.device .. (sizeStr ~= "" and (" · " .. sizeStr) or ""),
+                        color = "on_surface_variant",
+                        fontSize = 11,
+                    }),
                 }),
             }),
             ui.row({ gap = 4, align = "center" }, driveHeaderActions),
