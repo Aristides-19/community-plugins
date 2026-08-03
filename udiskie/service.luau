@@ -21,7 +21,7 @@ local function parseUdiskieOutput(stdout)
     end
 
     for line in stdout:gmatch("[^\r\n]+") do
-        local dev, label, mounted, mountPath, isLuks, isDrive, isPartition, isFilesystem, isDetachable, isEjectable, inUse = line:match("^([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|(.*)$")
+        local dev, label, mounted, mountPath, isLuks, isDrive, isPartition, isFilesystem, isDetachable, isEjectable, inUse, deviceSize = line:match("^([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|(.*)$")
         if dev ~= nil and dev ~= "" then
             local cleanLabel = (label ~= nil and label ~= "") and label or dev
             cleanLabel = cleanLabel:gsub("^[^:]+:%s*", "")
@@ -39,6 +39,7 @@ local function parseUdiskieOutput(stdout)
                 isDetachable = isTrue(isDetachable),
                 isEjectable = isTrue(isEjectable),
                 inUse = isTrue(inUse),
+                size = tonumber(deviceSize) or 0,
             }
             table.insert(rawDevices, devObj)
             if isM then
@@ -129,7 +130,7 @@ local function processNotifications(rawDevices, currentMounted)
 
     -- 4. Device Unmounted
     for dev, label in pairs(prevMountedDevices) do
-        if not currentMounted[dev] then
+        if not currentMounted[dev] and currentAllDevs[dev] then
             noctalia.notify("Drive Unmounted", label .. " was safely unmounted")
         end
     end
@@ -140,7 +141,7 @@ local function processNotifications(rawDevices, currentMounted)
 end
 
 local function fetchDevices()
-    noctalia.runAsync("udiskie-info -a -o \"{device_file}|{ui_label}|{is_mounted}|{mount_path}|{is_luks}|{is_drive}|{is_partition}|{is_filesystem}|{is_detachable}|{is_ejectable}|{in_use}\"", function(res)
+    noctalia.runAsync("udiskie-info -a -o \"{device_file}|{ui_label}|{is_mounted}|{mount_path}|{is_luks}|{is_drive}|{is_partition}|{is_filesystem}|{is_detachable}|{is_ejectable}|{in_use}|{device_size}\"", function(res)
         if not res or res.exitCode ~= 0 then
             noctalia.state.set("udiskie_devices", { drives = {}, standalone = {}, raw = {}, error = "missing_dep" })
             return
@@ -212,23 +213,15 @@ function onIpc(event, payload)
         end)
     elseif event == "eject" and payload then
         noctalia.runAsync("udiskie-umount -e " .. payload, function(res)
-            if noctalia.getConfig("enable_notifications") ~= false then
-                if res and res.exitCode == 0 then
-                    noctalia.notify("Media Ejected", "Media was safely ejected (" .. payload .. ")")
-                else
-                    noctalia.notifyError("Eject Failed", cleanError(res and res.stderr, "Could not eject " .. payload))
-                end
+            if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
+                noctalia.notifyError("Eject Failed", cleanError(res.stderr, "Could not eject " .. payload))
             end
             fetchDevices()
         end)
     elseif event == "detach" and payload then
         noctalia.runAsync("udiskie-umount -d " .. payload, function(res)
-            if noctalia.getConfig("enable_notifications") ~= false then
-                if res and res.exitCode == 0 then
-                    noctalia.notify("Drive Powered Off", "Drive " .. payload .. " powered off safely")
-                else
-                    noctalia.notifyError("Power Off Failed", cleanError(res and res.stderr, "Could not power off " .. payload))
-                end
+            if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
+                noctalia.notifyError("Power Off Failed", cleanError(res.stderr, "Could not power off " .. payload))
             end
             fetchDevices()
         end)
