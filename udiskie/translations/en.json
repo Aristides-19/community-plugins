@@ -22,13 +22,13 @@
     },
     "hide_when_empty": {
       "label": "Hide when empty",
-      "description": "Hide the bar widget when no removable drives are connected."
+      "description": "Hide the bar widget when no USB drives are connected."
     }
   },
   "tooltip_empty": "No devices mounted",
   "tooltip_mounted": "Mounted devices",
-  "panel_title": "Removable Storage Manager",
-  "panel_empty": "No removable drives detected",
+  "panel_title": "Udiskie Manager",
+  "panel_empty": "No USB drives detected",
   "btn_mount_all": "Mount All",
   "btn_unmount_all": "Unmount All",
   "btn_mount": "Mount",

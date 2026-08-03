@@ -1,4 +1,4 @@
-# Udiskie Manager: bar widget, service, and panel for managing removable storage.
+# Udiskie Manager: bar widget, service, and panel for managing USB drives and media.
 # A service monitors udiskie events in real time and publishes to shared state.
 # The bar widget renders mount count and the panel provides full device actions.
 
@@ -9,9 +9,9 @@ plugin_api = 9
 author = "aristides"
 license = "MIT"
 dependencies = ["udiskie", "udisks2", "xdg-open"]
-tags = ["bar", "panel", "service", "system", "utility"]
+tags = ["bar", "hardware", "panel", "service", "system", "utility"]
 icon = "device-usb"
-description = "Manage removable drives and media with real-time status and interactive panel."
+description = "Manage USB drives and media with notifications in just one panel."
 
 [[setting]]
 key = "enable_notifications"
