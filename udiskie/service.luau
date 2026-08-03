@@ -203,40 +203,40 @@ end
 -- IPC Handlers for Panel and Shortcuts
 function onIpc(event, payload)
     if event == "mount" and payload then
-        noctalia.runAsync("udiskie-mount " .. payload, function(res)
+        noctalia.runAsync("udiskie-mount -r " .. payload, function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
                 noctalia.notifyError("Mount Failed", cleanError(res.stderr, "Could not mount " .. payload))
             end
             fetchDevices()
-        end)
+        end, 30000)
     elseif event == "mount_all" then
         noctalia.runAsync("udiskie-mount -a", function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
                 noctalia.notifyError("Mount All Failed", cleanError(res and res.stderr, "Could not mount all devices"))
             end
             fetchDevices()
-        end)
+        end, 10000)
     elseif event == "unmount" and payload then
         noctalia.runAsync("udiskie-umount " .. payload, function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
                 noctalia.notifyError("Unmount Failed", cleanError(res.stderr, "Device " .. payload .. " is busy or in use"))
             end
             fetchDevices()
-        end)
+        end, 10000)
     elseif event == "unmount_all" then
         noctalia.runAsync("udiskie-umount -a", function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
                 noctalia.notifyError("Unmount All Failed", cleanError(res and res.stderr, "One or more devices are busy"))
             end
             fetchDevices()
-        end)
+        end, 10000)
     elseif event == "eject" and payload then
         noctalia.runAsync("udiskie-umount -e " .. payload, function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
                 noctalia.notifyError("Eject Failed", cleanError(res.stderr, "Could not eject " .. payload))
             end
             fetchDevices()
-        end)
+        end, 10000)
     elseif event == "detach" and payload then
         noctalia.runAsync("udiskie-umount -d " .. payload, function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
