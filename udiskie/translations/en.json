@@ -19,6 +19,10 @@
     "show_count": {
       "label": "Show device count",
       "description": "Display count of mounted devices on the bar."
+    },
+    "hide_when_empty": {
+      "label": "Hide when empty",
+      "description": "Hide the bar widget when no removable drives are connected."
     }
   },
   "tooltip_empty": "No devices mounted",

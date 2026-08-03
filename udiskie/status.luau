@@ -34,6 +34,15 @@ local function render()
         barWidget.setColor("")
     end
 
+    local hideWhenEmpty = noctalia.getConfig("hide_when_empty") == true
+    local rawCount = (type(data) == "table" and type(data.raw) == "table") and #data.raw or 0
+    if hideWhenEmpty and rawCount == 0 then
+        barWidget.setVisible(false)
+        return
+    else
+        barWidget.setVisible(true)
+    end
+
     if #mounted == 0 then
         barWidget.setText("")
         barWidget.setTooltip(noctalia.tr("tooltip_empty"))
