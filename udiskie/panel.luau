@@ -149,6 +149,14 @@ local function renderHeaderRow()
         ui.spacer(),
         ui.row({ gap = 6 }, {
             ui.button({
+                glyph = "settings",
+                variant = "ghost",
+                controlSize = "sm",
+                onClick = function()
+                    noctalia.openSettings()
+                end,
+            }),
+            ui.button({
                 text = noctalia.tr("btn_mount_all"),
                 glyph = "link",
                 variant = "secondary",
