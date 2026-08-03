@@ -66,5 +66,5 @@ default = false
 [[panel]]
 id = "manager"
 entry = "panel.luau"
-width = 540
+width = 600
 height = 450

@@ -44,7 +44,7 @@ end
 
 local function renderPartitionRow(part)
     local statusText = part.mounted and noctalia.tr("status_mounted") or (part.isLuks and noctalia.tr("status_locked") or noctalia.tr("status_unmounted"))
-    local statusColor = part.mounted and "primary" or (part.isLuks and "destructive" or "on_surface_variant")
+    local statusColor = part.mounted and "primary" or (part.isLuks and "error" or "on_surface_variant")
     local statusGlyph = part.mounted and "circle-check" or (part.isLuks and "lock" or "circle")
 
     local usageText = part.device
@@ -85,13 +85,23 @@ local function renderPartitionRow(part)
             onClick = function() unmountDevice(part.device) end,
         }))
     else
-        table.insert(actions, ui.button({
-            text = noctalia.tr("btn_mount"),
-            glyph = "player-play",
-            variant = "ghost",
-            controlSize = "sm",
-            onClick = function() mountDevice(part.device) end,
-        }))
+        if part.isLuks then
+            table.insert(actions, ui.button({
+                text = noctalia.tr("btn_unlock"),
+                glyph = "lock-open",
+                variant = "ghost",
+                controlSize = "sm",
+                onClick = function() mountDevice(part.device) end,
+            }))
+        else
+            table.insert(actions, ui.button({
+                text = noctalia.tr("btn_mount"),
+                glyph = "player-play",
+                variant = "ghost",
+                controlSize = "sm",
+                onClick = function() mountDevice(part.device) end,
+            }))
+        end
     end
 
     return ui.row({
