@@ -64,6 +64,18 @@ noctalia msg plugin aristides/udiskie:service all unmount_all
 noctalia msg plugin aristides/udiskie:service all refresh
 ```
 
+## Performance
+
+The plugin eliminates the standalone Python `udiskie` daemon by using an event-driven `udisksctl monitor` subprocess managed by Noctalia. Both approaches activate `udisksd` via D-Bus on first use.
+
+| Component                            | RSS        | VSZ      | CPU  |
+| ------------------------------------ | ---------- | -------- | ---- |
+| `udisksctl monitor` (this plugin)    | ~12 MB     | ~170 MB  | 0.0% |
+| `udiskie` Python daemon (standalone) | ~84–110 MB | ~1183 MB | 0.2% |
+| `udisksd` (shared, D-Bus activated)  | ~22 MB     | ~688 MB  | 0.2% |
+
+**Total footprint**: plugin ~34 MB vs standalone ~106–132 MB. **Saves ~72–98 MB RAM** and avoids a persistent Python process.
+
 ## Development
 
 Run plugin validation and tests using the workspace Makefile:
@@ -74,6 +86,4 @@ make test
 
 ## Notes
 
-- Monitors `udisksctl monitor` in real time.
-- Encrypted LUKS volumes (`crypto_LUKS`) are detected automatically and present an unlock action.
 - Requires plugin API level 9 or newer.
