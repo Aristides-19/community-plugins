@@ -39,6 +39,16 @@ local function renderPartitionRow(part)
     if part.mounted then
         if part.mountPath ~= "" then
             table.insert(actions, ui.button({
+                glyph = "copy",
+                tooltip = noctalia.tr("copy_path_tooltip"),
+                variant = "ghost",
+                controlSize = "sm",
+                onClick = function()
+                    noctalia.copyToClipboard(part.mountPath, "text/plain;charset=utf-8")
+                    noctalia.notify(noctalia.tr("copy_path_tooltip"), noctalia.tr("notify_path_copied"))
+                end,
+            }))
+            table.insert(actions, ui.button({
                 text = noctalia.tr("btn_open"),
                 glyph = "folder",
                 variant = "outline",
