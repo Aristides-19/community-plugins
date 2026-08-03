@@ -54,6 +54,7 @@ body:
         - ideapad-conservation-mode
         - iio_lock
         - imagemagick-clock
+        - ip-monitor
         - jetbrains-provider
         - keybind-cheatsheet
         - keymap
@@ -66,6 +67,7 @@ body:
         - mimir
         - mini-docker
         - nextboot-selector
+        - niri-animations
         - nix-monitor
         - noctwhspr
         - pass
