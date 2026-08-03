@@ -44,7 +44,7 @@ end
 
 local function renderPartitionRow(part)
     local statusText = part.mounted and noctalia.tr("status_mounted") or (part.isLuks and noctalia.tr("status_locked") or noctalia.tr("status_unmounted"))
-    local statusColor = part.mounted and "success" or (part.isLuks and "error" or "on_surface_variant")
+    local statusColor = part.mounted and "primary" or (part.isLuks and "destructive" or "on_surface_variant")
     local statusGlyph = part.mounted and "circle-check" or (part.isLuks and "lock" or "circle")
 
     local usageText = part.device
@@ -105,10 +105,18 @@ local function renderPartitionRow(part)
         height = 52,
     }, {
         ui.column({ gap = 2, flexGrow = 1, justify = "center" }, {
-            ui.row({ gap = 6, align = "center" }, {
+            ui.row({ gap = 8, align = "center" }, {
                 ui.glyph({ name = statusGlyph, size = 14, color = statusColor }),
                 ui.label({ text = part.label, fontWeight = "bold", fontSize = 13, maxLines = 1 }),
-                ui.label({ text = "• " .. statusText, color = statusColor, fontSize = 11 }),
+                ui.row({
+                    align = "center",
+                    fill = statusColor .. "/0.15",
+                    radius = 4,
+                    paddingV = 1,
+                    paddingH = 6,
+                }, {
+                    ui.label({ text = statusText, color = statusColor, fontSize = 10, fontWeight = "medium" }),
+                }),
             }),
             ui.label({
                 text = usageText,

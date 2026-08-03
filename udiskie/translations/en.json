@@ -41,5 +41,7 @@
   "status_locked": "Locked (LUKS)",
   "error_missing_dep": "udiskie binary is missing from PATH",
   "btn_retry": "Retry Connection",
-  "btn_docs": "Check Documentation"
+  "btn_docs": "Check Documentation",
+  "copy_path_tooltip": "Copy mount path",
+  "notify_path_copied": "Path copied to clipboard"
 }
