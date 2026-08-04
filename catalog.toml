@@ -284,8 +284,8 @@ rev = "203aaef232cb47ba37c9b32af82f27225ea1916e"
 [[plugin]]
 id = "h465855hgg/lyrics"
 name = "Lyrics"
-version = "1.4.4"
-updated_at = 1785024261
+version = "1.4.5"
+updated_at = 1785811198
 added_at = 1784238037
 author = "h465855hgg"
 license = "MIT"
@@ -574,8 +574,8 @@ tags = ["bar", "panel", "service", "productivity", "time"]
 [[plugin]]
 id = "cleboost/anilist"
 name = "AniList (UNOFFICIAL)"
-version = "1.1.1"
-updated_at = 1785532344
+version = "1.1.2"
+updated_at = 1785811012
 added_at = 1784843708
 author = "Cleboost"
 license = "MIT"
@@ -644,8 +644,8 @@ tags = ["bar", "indicator", "productivity", "service", "shortcut", "system", "ut
 [[plugin]]
 id = "emrtnn/pass"
 name = "Pass"
-version = "0.0.1"
-updated_at = 1784895988
+version = "0.1.0"
+updated_at = 1785759403
 added_at = 1784895988
 author = "emrtnn"
 license = "MIT"
@@ -894,8 +894,8 @@ tags = ["bar", "panel", "service", "media"]
 [[plugin]]
 id = "nilsonlinux/rss-notifier"
 name = "RSS/Atom Notifier"
-version = "1.0.0"
-updated_at = 1785462185
+version = "1.0.1"
+updated_at = 1785810958
 added_at = 1785462185
 author = "Nilsonlinux"
 license = "MIT"
@@ -984,3 +984,96 @@ icon = "movie"
 description = "Pick a niri animation preset, tune global speed, or turn animations off."
 plugin_api = 9
 tags = ["niri", "animation", "panel", "shortcut"]
+
+[[plugin]]
+id = "salemsayed/niri-active-workspace"
+name = "Niri Active Workspace"
+version = "1.1.0"
+updated_at = 1785761085
+added_at = 1785761085
+author = "salemsayed"
+license = "MIT"
+icon = "layout-grid"
+description = "Shows only the focused niri workspace in the bar."
+deprecated = false
+plugin_api = 3
+tags = ["bar", "indicator", "niri"]
+
+[[plugin]]
+id = "neyfua/obs-integration"
+name = "OBS Integration"
+version = "1.0.0"
+updated_at = 1785760054
+added_at = 1785760054
+author = "neyfua"
+license = "MIT"
+icon = "buildings"
+description = "Manage your openSUSE Build Service projects and packages."
+plugin_api = 9
+tags = ["productivity", "service", "utility", "opensuse"]
+
+[[plugin]]
+id = "yocraft/qrcode"
+name = "QR Code Encoder"
+version = "1.0.0"
+updated_at = 1785759441
+added_at = 1785759441
+author = "yocraft"
+license = "MIT"
+icon = "qrcode"
+description = "Transform any text or URL in a QR code"
+deprecated = false
+plugin_api = 15
+tags = ["panel", "fun", "network", "privacy", "productivity", "utility"]
+
+[[plugin]]
+id = "alexander/screen-toolkit"
+name = "Screen Toolkit"
+version = "1.1.0"
+updated_at = 1785811087
+added_at = 1785759728
+author = "alexander"
+license = "MIT"
+icon = "crosshair"
+description = "Screen tools: color picker, OCR, QR, palette, lens, annotate, measure, and recording."
+plugin_api = 9
+tags = ["recording", "utility", "bar", "panel", "shortcut", "service", "hyprland", "niri", "sway"]
+
+[[plugin]]
+id = "coder/deepseek_usage"
+name = "DeepSeek Usage"
+version = "1.0.0"
+updated_at = 1785789221
+added_at = 1785789221
+author = "coder"
+license = "MIT"
+icon = "wallet"
+description = "DeepSeek API credit and balance monitor for Noctalia shell"
+plugin_api = 19
+tags = ["utility", "productivity", "bar", "panel"]
+
+[[plugin]]
+id = "ezequiel/mango_layouts"
+name = "Mango Layouts"
+version = "1.0.0"
+updated_at = 1785788249
+added_at = 1785788249
+author = "ezequiel"
+license = "MIT"
+icon = "layout-filled"
+description = "Layout switcher for MangoWC"
+plugin_api = 14
+tags = ["bar", "panel", "mangowc", "utility"]
+
+[[plugin]]
+id = "maddingo/hypr-layout-switcher"
+name = "Hyprland Layout Switcher"
+version = "0.1.0"
+updated_at = 1785812073
+added_at = 1785812073
+author = "maddingo"
+license = "MIT"
+icon = "layout-grid"
+description = "Shows and cycles the active workspace's layout"
+plugin_api = 3
+tags = ["hyprland"]

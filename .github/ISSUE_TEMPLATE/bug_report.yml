@@ -38,6 +38,7 @@ body:
         - claude-companion
         - color_picker
         - daily-wallpaper
+        - deepseek_usage
         - drive-health
         - dropwall
         - ds4-color
@@ -49,6 +50,7 @@ body:
         - gslapper
         - hassio
         - hotspot
+        - hypr-layout-switcher
         - hypr-screen-mirror
         - hypr-submap
         - ideapad-conservation-mode
@@ -62,21 +64,26 @@ body:
         - llamanager
         - lrc
         - lyrics
+        - mango_layouts
         - mangowm-keymode
         - mawaqit
         - mimir
         - mini-docker
         - nextboot-selector
+        - niri-active-workspace
         - niri-animations
         - nix-monitor
         - noctwhspr
+        - obs-integration
         - pass
         - phone-connect
         - pomodoro
         - portctl
         - prismlauncher-instances
         - proton-pass
+        - qrcode
         - rss-notifier
+        - screen-toolkit
         - sharednd
         - shelly
         - special-workspaces
