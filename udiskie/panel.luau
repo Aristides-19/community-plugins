@@ -1,8 +1,12 @@
 --!nonstrict
 -- Udiskie Manager Panel: Hierarchical Declarative UI panel for managing drives & partitions.
 
+local function shellQuote(value)
+    return "'" .. tostring(value):gsub("'", "'\\''") .. "'"
+end
+
 local function mountDevice(dev)
-    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all mount " .. dev)
+    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all mount " .. shellQuote(dev))
     -- Close the panel when mounting if the file manager will auto-open.
     if noctalia.getConfig("auto_open_filemanager") == true then
         panel.close()
@@ -10,19 +14,19 @@ local function mountDevice(dev)
 end
 
 local function unmountDevice(dev)
-    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all unmount " .. dev)
+    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all unmount " .. shellQuote(dev))
 end
 
 local function ejectDevice(dev)
-    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all eject " .. dev)
+    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all eject " .. shellQuote(dev))
 end
 
 local function detachDevice(dev)
-    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all detach " .. dev)
+    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all detach " .. shellQuote(dev))
 end
 
 local function openPath(path)
-    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all open " .. path)
+    noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all open " .. shellQuote(path))
     panel.close()
 end
 
