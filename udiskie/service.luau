@@ -12,9 +12,13 @@ local function isTrue(val)
     return type(val) == "string" and val:lower() == "true"
 end
 
+local function shellQuote(value)
+    return "'" .. tostring(value):gsub("'", "'\\''") .. "'"
+end
+
 local function openWithFileManager(path)
     local cmd = noctalia.getConfig("file_manager_cmd") or "xdg-open"
-    noctalia.runAsync(cmd .. " " .. path)
+    noctalia.runAsync(cmd .. " " .. shellQuote(path))
 end
 
 local function parseUdiskieOutput(stdout)
@@ -210,7 +214,7 @@ end
 -- IPC Handlers for Panel and Shortcuts
 function onIpc(event, payload)
     if event == "mount" and payload then
-        noctalia.runAsync("udiskie-mount -r " .. payload, function(res)
+        noctalia.runAsync("udiskie-mount -r " .. shellQuote(payload), function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
                 noctalia.notifyError(noctalia.tr("notif_mount_failed_title"), cleanError(res.stderr, noctalia.tr("notif_mount_failed_fallback", { device = payload })))
             end
@@ -224,7 +228,7 @@ function onIpc(event, payload)
             fetchDevices()
         end, 10000)
     elseif event == "unmount" and payload then
-        noctalia.runAsync("udiskie-umount " .. payload, function(res)
+        noctalia.runAsync("udiskie-umount " .. shellQuote(payload), function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
                 noctalia.notifyError(noctalia.tr("notif_unmount_failed_title"), cleanError(res.stderr, noctalia.tr("notif_unmount_failed_fallback", { device = payload })))
             end
@@ -238,14 +242,14 @@ function onIpc(event, payload)
             fetchDevices()
         end, 10000)
     elseif event == "eject" and payload then
-        noctalia.runAsync("udiskie-umount -e " .. payload, function(res)
+        noctalia.runAsync("udiskie-umount -e " .. shellQuote(payload), function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
                 noctalia.notifyError(noctalia.tr("notif_eject_failed_title"), cleanError(res.stderr, noctalia.tr("notif_eject_failed_fallback", { device = payload })))
             end
             fetchDevices()
         end, 10000)
     elseif event == "detach" and payload then
-        noctalia.runAsync("udiskie-umount -d " .. payload, function(res)
+        noctalia.runAsync("udiskie-umount -d " .. shellQuote(payload), function(res)
             if res and res.exitCode ~= 0 and noctalia.getConfig("enable_notifications") ~= false then
                 noctalia.notifyError(noctalia.tr("notif_poweroff_failed_title"), cleanError(res.stderr, noctalia.tr("notif_poweroff_failed_fallback", { device = payload })))
             end
