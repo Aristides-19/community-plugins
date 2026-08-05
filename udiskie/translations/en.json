@@ -18,7 +18,7 @@
     },
     "show_count": {
       "label": "Show device count",
-      "description": "Display count of mounted devices on the bar."
+      "description": "Display count of mounted devices on the bar widget."
     },
     "hide_when_empty": {
       "label": "Hide when empty",

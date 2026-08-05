@@ -5,14 +5,12 @@ import sys
 
 def main():
     plugin_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    trans_file = os.path.join(plugin_dir, "translations", "en.json")
+    trans_dir = os.path.join(plugin_dir, "translations")
+    en_file = os.path.join(trans_dir, "en.json")
 
-    if not os.path.exists(trans_file):
-        print(f"Error: Translation file not found at {trans_file}")
+    if not os.path.exists(en_file):
+        print(f"Error: Translation file not found at {en_file}")
         sys.exit(1)
-
-    with open(trans_file, "r", encoding="utf-8") as f:
-        translations = json.load(f)
 
     def flatten_keys(d, prefix=""):
         keys = []
@@ -24,9 +22,13 @@ def main():
                 keys.append(full_key)
         return keys
 
-    all_keys = set(flatten_keys(translations))
+    with open(en_file, "r", encoding="utf-8") as f:
+        en_translations = json.load(f)
 
-    # Code and manifest files to scan
+    en_keys = set(flatten_keys(en_translations))
+    errors = []
+
+    # Code and manifest files to scan (checked against en.json, the reference).
     scan_files = ["plugin.toml", "service.luau", "status.luau", "panel.luau"]
     combined_content = ""
 
@@ -36,20 +38,45 @@ def main():
             with open(fpath, "r", encoding="utf-8") as f:
                 combined_content += f.read() + "\n"
 
+    # 1. Every en.json key must be used somewhere in the codebase.
     missing_keys = []
-    for key in sorted(list(all_keys)):
-        # Setting label_key and description_key append .label and .description automatically
+    for key in sorted(en_keys):
+        # Setting label_key and description_key append .label and .description automatically.
         base_key = key.replace(".label", "").replace(".description", "")
         if key not in combined_content and base_key not in combined_content:
             missing_keys.append(key)
 
     if missing_keys:
-        print(f"Unused translation key(s) found in translations/en.json:")
-        for k in missing_keys:
-            print(f"  - {k}")
+        errors.append("Unused translation key(s) found in translations/en.json:\n  - " + "\n  - ".join(missing_keys))
+
+    # 2. Every other translation file must have exactly the same keys as en.json.
+    for fname in sorted(os.listdir(trans_dir)):
+        if not fname.endswith(".json") or fname == "en.json":
+            continue
+        fpath = os.path.join(trans_dir, fname)
+        with open(fpath, "r", encoding="utf-8") as f:
+            try:
+                other = json.load(f)
+            except json.JSONDecodeError as e:
+                errors.append(f"Invalid JSON in translations/{fname}: {e}")
+                continue
+        other_keys = set(flatten_keys(other))
+        missing = sorted(en_keys - other_keys)
+        extra = sorted(other_keys - en_keys)
+        if missing:
+            errors.append(f"translations/{fname} is missing key(s):\n  - " + "\n  - ".join(missing))
+        if extra:
+            errors.append(f"translations/{fname} has extra key(s) not in en.json:\n  - " + "\n  - ".join(extra))
+
+    if errors:
+        for e in errors:
+            print(e)
         sys.exit(1)
-    else:
-        print(f"✓ All {len(all_keys)} translation keys in translations/en.json are active and used in codebase.")
+
+    other_count = len([f for f in os.listdir(trans_dir) if f.endswith(".json") and f != "en.json"])
+    print(f"✓ All {len(en_keys)} translation keys in translations/en.json are active and used in codebase.")
+    if other_count:
+        print(f"✓ {other_count} other translation file(s) match the en.json key set exactly.")
 
 if __name__ == "__main__":
     main()
