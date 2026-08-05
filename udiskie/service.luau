@@ -12,6 +12,11 @@ local function isTrue(val)
     return type(val) == "string" and val:lower() == "true"
 end
 
+local function openWithFileManager(path)
+    local cmd = noctalia.getConfig("file_manager_cmd") or "xdg-open"
+    noctalia.runAsync(cmd .. " " .. path)
+end
+
 local function parseUdiskieOutput(stdout)
     local rawDevices = {}
     local currentMounted = {}
@@ -117,10 +122,9 @@ local function processNotifications(rawDevices, currentMounted)
         if not prevMountedDevices[dev] then
             noctalia.notify(noctalia.tr("notif_drive_mounted_title"), noctalia.tr("notif_drive_mounted_body", { label = label }))
             if noctalia.getConfig("auto_open_filemanager") == true then
-                local cmd = noctalia.getConfig("file_manager_cmd") or "xdg-open"
                 for _, d in ipairs(rawDevices) do
                     if d.device == dev and d.mountPath ~= "" then
-                        noctalia.runAsync(cmd .. " " .. d.mountPath)
+                        openWithFileManager(d.mountPath)
                         break
                     end
                 end
@@ -245,8 +249,7 @@ function onIpc(event, payload)
             fetchDevices()
         end)
     elseif event == "open" and payload then
-        local cmd = noctalia.getConfig("file_manager_cmd") or "xdg-open"
-        noctalia.runAsync(cmd .. " " .. payload)
+        openWithFileManager(payload)
     elseif event == "refresh" then
         fetchDevices()
     end

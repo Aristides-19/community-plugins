@@ -3,6 +3,10 @@
 
 local function mountDevice(dev)
     noctalia.runAsync("noctalia msg plugin aristides/udiskie:service all mount " .. dev)
+    -- Close the panel when mounting if the file manager will auto-open.
+    if noctalia.getConfig("auto_open_filemanager") == true then
+        panel.close()
+    end
 end
 
 local function unmountDevice(dev)
