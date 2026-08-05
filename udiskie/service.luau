@@ -21,7 +21,7 @@ local function parseUdiskieOutput(stdout)
     end
 
     for line in stdout:gmatch("[^\r\n]+") do
-        local dev, label, mounted, mountPath, isLuks, isDrive, isPartition, isFilesystem, isDetachable, isEjectable, inUse, deviceSize = line:match("^([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|(.*)$")
+        local dev, label, mounted, mountPath, isLuks, isDrive, isPartition, isFilesystem, isDetachable, isEjectable, inUse, deviceSize = line:match("^([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t(.*)$")
         if dev ~= nil and dev ~= "" then
             local cleanLabel = (label ~= nil and label ~= "") and label or dev
             cleanLabel = cleanLabel:gsub("^[^:]+:%s*", "")
@@ -141,7 +141,7 @@ local function processNotifications(rawDevices, currentMounted)
 end
 
 local function fetchDevices()
-    noctalia.runAsync("udiskie-info -a -o \"{device_file}|{ui_label}|{is_mounted}|{mount_path}|{is_luks}|{is_drive}|{is_partition}|{is_filesystem}|{is_detachable}|{is_ejectable}|{in_use}|{device_size}\"", function(res)
+    noctalia.runAsync("udiskie-info -a -o \"{device_file}\t{ui_label}\t{is_mounted}\t{mount_path}\t{is_luks}\t{is_drive}\t{is_partition}\t{is_filesystem}\t{is_detachable}\t{is_ejectable}\t{in_use}\t{device_size}\"", function(res)
         if not res or res.exitCode ~= 0 then
             noctalia.state.set("udiskie_devices", { drives = {}, standalone = {}, raw = {}, error = "missing_dep" })
             return
