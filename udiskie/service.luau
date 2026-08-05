@@ -202,8 +202,8 @@ local function cleanError(stderr, fallback)
     if not stderr or stderr == "" then
         return fallback
     end
-    -- Strip DBus path prefixes like "failed to unmount /org/freedesktop/UDisks2/...:" or "failed to mount /dev/sda1:"
-    local clean = stderr:gsub("failed to %w+ %S+:%s*", "")
+    -- upstream formats errors as "failed to <verb> <device>: <message>").
+    local clean = stderr:gsub("failed to %w+ [^:]+:%s*", "")
     -- Strip GDBus error identifiers like "GDBus.Error:org.freedesktop.UDisks2.Error.DeviceBusy:"
     clean = clean:gsub("GDBus%.Error:[%w%.]+:%s*", "")
     -- Clean leading/trailing whitespace
