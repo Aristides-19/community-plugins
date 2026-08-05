@@ -97,7 +97,10 @@ local function processNotifications(rawDevices, currentMounted)
 
     local currentAllDevs = {}
     for _, d in ipairs(rawDevices) do
-        if d.isDrive or (not d.isPartition and not d.isFilesystem) then
+        -- Physical drives only: LUKS containers are excluded so the "Drive
+        -- Connected" notification fires once for the underlying physical disk,
+        -- not again for the encrypted volume.
+        if not d.isLuks and (d.isDrive or (not d.isPartition and not d.isFilesystem)) then
             currentAllDevs[d.device] = d.label
         end
     end
