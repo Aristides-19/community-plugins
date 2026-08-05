@@ -65,7 +65,7 @@ local function buildHierarchy(rawDevices)
         if d.isPartition or d.isFilesystem or d.isLuks then
             local parentFound = false
             for _, drvItem in ipairs(drives) do
-                if d.device:find("^" .. drvItem.drive.device) then
+                if d.device:find("^" .. drvItem.drive.device .. "[%dp]") then
                     table.insert(drvItem.partitions, d)
                     parentFound = true
                     break
