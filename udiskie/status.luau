@@ -2,8 +2,7 @@
 -- Udiskie bar widget: renders the mounted-device count and a tooltip listing.
 -- the mounted devices. State comes from the udiskie service via shared state.
 
-local function mountedDevices()
-    local data = noctalia.state.get("udiskie_devices")
+local function mountedDevices(data)
     if type(data) ~= "table" or type(data.raw) ~= "table" then
         return {}
     end
@@ -18,7 +17,7 @@ end
 
 local function render()
     local data = noctalia.state.get("udiskie_devices")
-    local mounted = mountedDevices()
+    local mounted = mountedDevices(data)
     local glyph = noctalia.getConfig("glyph") or "device-usb"
     local showCount = noctalia.getConfig("show_count")
 
@@ -30,6 +29,8 @@ local function render()
         barWidget.setTooltip(noctalia.tr("error_missing_dep"))
         return
     else
+        -- Reset to the theme default. The API does not document "" as a reset;
+        -- today it clears the role/color. Revisit if the host ever rejects it.
         barWidget.setGlyphColor("")
         barWidget.setColor("")
     end

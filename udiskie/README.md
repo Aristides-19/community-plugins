@@ -28,6 +28,12 @@ Install `udiskie`, `udisks2`, and `xdg-open` on `PATH`:
 - `udisks2`: Provides `udisksctl` for real-time DBus event streaming.
 - `xdg-open`: Launcher binary for opening mounted folders in the file manager.
 
+> **`udiskie-info -o` fields**: the service queries `udiskie-info -o` with the
+> device attributes listed under `VALID_PARAMETERS` (e.g. `is_drive`,
+> `is_partition`, `is_luks`, `mount_path`, `is_detachable`). If your `udiskie` is
+> old enough to lack any of them, the device list will come back empty — upgrade
+> `udiskie` in that case. A recent release (2.x) is recommended.
+
 ## Usage
 
 - **Bar Widget (`status`)**: Add `status` to the bar configuration in Noctalia settings. Left-click to open the Udiskie Manager Panel. Right-click to trigger an immediate plugin refresh.
@@ -75,6 +81,9 @@ The plugin eliminates the standalone Python `udiskie` daemon by using an event-d
 | `udisksd` (shared, D-Bus activated)  | ~22 MB     | ~688 MB  | 0.2% |
 
 **Total footprint**: plugin ~34 MB vs standalone ~106–132 MB. **Saves ~72–98 MB RAM** and avoids a persistent Python process.
+
+> Measurements are local to a given system/kernel and udiskie version; actual
+> RSS/VSZ/CPU values vary by hardware and environment.
 
 ## Development
 

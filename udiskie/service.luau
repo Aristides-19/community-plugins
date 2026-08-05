@@ -192,7 +192,7 @@ noctalia.state.set("udiskie_devices", {})
 fetchDevices()
 
 -- Event-driven streaming using udisksctl monitor
-noctalia.runStream("udisksctl monitor", function(line)
+noctalia.runStream("udisksctl monitor 2>/dev/null", function(line)
     if line:find("Added") or line:find("PropertiesChanged") or line:find("Removed") then
         fetchDevices()
     end
